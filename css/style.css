@@ -1,0 +1,30 @@
+h1 {
+    color: green;
+}
+
+h2 {
+    color: #336699;
+}
+
+h3 {
+    color: darkgoldenrod;
+}
+
+dl dt {
+    font-weight: bold;
+}
+
+dl dt:after {
+    content: ":";
+}
+
+dd ul {
+    margin: 0;
+    padding: 0;
+
+}
+
+dd ul li {
+    list-style-position: inside;
+}
+
