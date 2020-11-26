@@ -1,0 +1,116 @@
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="shortcut icon" type="image/png" href="../common/images/favicon.png" />
+        <link rel="stylesheet" href="../common/lib/normalize.css">
+        <script type="text/javascript" src="../common/js/utils.js"></script>
+        
+        <script id="vertex-shader" type="x-shader/x-vertex">
+            #version 300 es
+            precision mediump float;
+            
+            in vec3 aVertexPosition;
+            
+            void main(void) {
+                gl_Position = vec4(aVertexPosition, 1.0);
+            }
+        </script>
+        
+        <script id="fragment-shader" type="x-shader/x-fragment">
+            #version 300 es
+            precision mediump float;
+            
+            out vec4 flagColor;
+            
+            void main(void) {
+                flagColor = vec4(1.0, 1.0, 0.0, 1.0);
+            }
+        </script>
+
+        <script type="text/javascript">
+            let gl, program, indices, squareVertexBuffer, squareIndexBuffer;
+            
+            function initProgram() {
+                const vertexShader = utils.getShader(gl, "vertex-shader");
+                const fragmentShader = utils.getShader(gl, "fragment-shader");
+                
+                program = gl.createProgram();
+                
+                gl.attachShader(program, vertexShader);
+                gl.attachShader(program, fragmentShader);
+                
+                gl.linkProgram(program);
+                
+                if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                    console.error("Could not initialize shaders");
+                }
+                
+                gl.useProgram(program);
+                
+                program.aVertexPosition = gl.getAttribLocation(program, 'aVertexPosition');
+            }
+            
+            function initBuffers() {
+                const vertices = [
+                    -0.5,  0.5, 0,
+                    -0.5, -0.5, 0,
+                     0.5, -0.5, 0,
+                     0.5,  0.5, 0
+                ];
+                
+                indices = [0, 1, 2, 0, 2, 3];
+                
+                squareVertexBuffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+                
+                squareIndexBuffer = gl.createBuffer();
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, squareIndexBuffer);
+                gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+                
+                gl.bindBuffer(gl.ARRAY_BUFFER, null);
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+            }
+            
+            function draw() {
+                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+                
+                gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexBuffer);
+                gl.vertexAttribPointer(program.aVertexPosition, 3, gl.FLOAT, false, 0, 0);
+                gl.enableVertexAttribArray(program.aVertexPosition);
+                
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, squareIndexBuffer);
+                
+                gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+                
+                gl.bindBuffer(gl.ARRAY_BUFFER, null);
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+            }
+            
+            function init() {
+                const canvas = utils.getCanvas('webgl-canvas');
+                utils.autoResizeCanvas(canvas);
+
+                gl = utils.getGLContext(canvas);
+                
+                gl.clearColor(0, 0, 0, 1);
+                
+                
+                initProgram();
+                initBuffers();
+                draw();
+            }
+
+            window.onload = init;
+        </script>
+    </head>
+    <body>
+        <canvas id="webgl-canvas">
+            Your browser does not support the HTML5 canvas element.
+        </canvas>
+    </body>
+</html>
