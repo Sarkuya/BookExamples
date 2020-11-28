@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>TODO supply a title</title>
+        <title>WebGL2 Template</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -26,12 +26,13 @@
             out vec4 flagColor;
             
             void main(void) {
-                flagColor = vec4(1.0, 1.0, 0.0, 1.0);
+                flagColor = vec4(0.8, 0.0, 0.8, 1.0);
             }
         </script>
 
         <script type="text/javascript">
-            let gl, program, indices, squareVertexBuffer, squareIndexBuffer;
+            let gl, program, indices, squareIndexBuffer;
+            let squareVAO;
             
             function initProgram() {
                 const vertexShader = utils.getShader(gl, "vertex-shader");
@@ -63,14 +64,20 @@
                 
                 indices = [0, 1, 2, 0, 2, 3];
                 
-                squareVertexBuffer = gl.createBuffer();
+                squareVAO = gl.createVertexArray();
+                gl.bindVertexArray(squareVAO);
+                
+                const squareVertexBuffer = gl.createBuffer();
                 gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexBuffer);
                 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+                gl.enableVertexAttribArray(program.aVertexPosition);
+                gl.vertexAttribPointer(program.aVertexPosition, 3, gl.FLOAT, false, 0, 0);
                 
                 squareIndexBuffer = gl.createBuffer();
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, squareIndexBuffer);
                 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
                 
+                gl.bindVertexArray(null);
                 gl.bindBuffer(gl.ARRAY_BUFFER, null);
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
             }
@@ -79,16 +86,11 @@
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                 gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
                 
-                gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexBuffer);
-                gl.vertexAttribPointer(program.aVertexPosition, 3, gl.FLOAT, false, 0, 0);
-                gl.enableVertexAttribArray(program.aVertexPosition);
-                
-                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, squareIndexBuffer);
+                gl.bindVertexArray(squareVAO);
                 
                 gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
                 
-                gl.bindBuffer(gl.ARRAY_BUFFER, null);
-                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+                gl.bindVertexArray(null);
             }
             
             function init() {
@@ -98,7 +100,6 @@
                 gl = utils.getGLContext(canvas);
                 
                 gl.clearColor(0, 0, 0, 1);
-                
                 
                 initProgram();
                 initBuffers();
