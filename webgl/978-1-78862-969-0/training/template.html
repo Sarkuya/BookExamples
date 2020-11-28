@@ -93,6 +93,11 @@
                 gl.bindVertexArray(null);
             }
             
+            function render() {
+                requestAnimationFrame(render);
+                draw();
+            }
+            
             function init() {
                 const canvas = utils.getCanvas('webgl-canvas');
                 utils.autoResizeCanvas(canvas);
@@ -103,7 +108,7 @@
                 
                 initProgram();
                 initBuffers();
-                draw();
+                render();
             }
 
             window.onload = init;
