@@ -26,12 +26,12 @@
             out vec4 flagColor;
             
             void main(void) {
-                flagColor = vec4(0.8, 0.0, 0.8, 1.0);
+                flagColor = vec4(1.0, 1.0, 0.0, 1.0);
             }
         </script>
 
         <script type="text/javascript">
-            let gl, program, indices, squareIndexBuffer;
+            let gl, program, indices;
             let squareVAO;
             
             function initProgram() {
@@ -73,7 +73,7 @@
                 gl.enableVertexAttribArray(program.aVertexPosition);
                 gl.vertexAttribPointer(program.aVertexPosition, 3, gl.FLOAT, false, 0, 0);
                 
-                squareIndexBuffer = gl.createBuffer();
+                const squareIndexBuffer = gl.createBuffer();
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, squareIndexBuffer);
                 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
                 
