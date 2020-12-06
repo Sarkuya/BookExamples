@@ -5,15 +5,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <link rel="shortcut icon" type="image/png" href="../common/images/favicon.png" />
+        
         <link rel="stylesheet" href="../common/lib/normalize.css">
         <script type="text/javascript" src="../common/js/utils.js"></script>
-        
-        <link rel="stylesheet" href="../common/lib/dat.gui.css">
-        <script type="text/javascript" src="../common/lib/dat.gui.js"></script>
+        <script type="text/javascript" src="../common/js/Program.js"></script>
         
         <script id="vertex-shader" type="x-shader/x-vertex">
             #version 300 es
-            precision mediump float;
             
             in vec3 aVertexPosition;
             
@@ -37,26 +35,9 @@
             let gl, program, indices;
             let squareVAO;
             
-            let clearColor = [0, 0, 0];
-            
             function initProgram() {
-                const vertexShader = utils.getShader(gl, "vertex-shader");
-                const fragmentShader = utils.getShader(gl, "fragment-shader");
-                
-                program = gl.createProgram();
-                
-                gl.attachShader(program, vertexShader);
-                gl.attachShader(program, fragmentShader);
-                
-                gl.linkProgram(program);
-                
-                if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-                    console.error("Could not initialize shaders");
-                }
-                
-                gl.useProgram(program);
-                
-                program.aVertexPosition = gl.getAttribLocation(program, 'aVertexPosition');
+                program = new Program(gl, "vertex-shader", "fragment-shader");
+                program.setAttributeLocations(["aVertexPosition"]);
             }
             
             function initBuffers() {
@@ -92,7 +73,6 @@
                 gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
                 
                 gl.bindVertexArray(squareVAO);
-                
                 gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
                 
                 gl.bindVertexArray(null);
@@ -103,30 +83,23 @@
                 draw();
             }
             
-            function initDatGui() {
-                utils.configureControls({
-                    Background: {
-                        value: utils.denormalizeColor(clearColor),
-                        onChange: v => gl.clearColor(...utils.normalizeColor(v), 1)
-                    }
-                });
-            }
-            
             function init() {
                 const canvas = utils.getCanvas('webgl-canvas');
-                utils.autoResizeCanvas(canvas);
+                utils.autoEqualSizeCanvas(canvas);
 
                 gl = utils.getGLContext(canvas);
                 
-                gl.clearColor(...clearColor, 1);
+                gl.clearColor(0, 0, 0, 1);
+                
+                gl.enable(gl.DEPTH_TEST);
+                gl.clearDepth(1);
+                gl.depthFunc(gl.LESS);
                 
                 initProgram();
                 initBuffers();
                 render();
-                
-                initDatGui();
             }
-            
+
             window.onload = init;
         </script>
     </head>
