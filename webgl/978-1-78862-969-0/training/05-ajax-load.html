@@ -5,12 +5,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <link rel="shortcut icon" type="image/png" href="../common/images/favicon.png" />
+        
         <link rel="stylesheet" href="../common/lib/normalize.css">
         <script type="text/javascript" src="../common/js/utils.js"></script>
 
         <script id="vertex-shader" type="x-shader/x-vertex">
             #version 300 es
-            precision mediump float;
 
             in vec3 aVertexPosition;
 
@@ -90,7 +90,6 @@
                 gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
                 gl.bindVertexArray(coneVAO);
-
                 gl.drawElements(gl.TRIANGLES, model.indices.length, gl.UNSIGNED_SHORT, 0);
 
                 gl.bindVertexArray(null);

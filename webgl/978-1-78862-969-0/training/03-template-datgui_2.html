@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="../common/lib/normalize.css">
         <script type="text/javascript" src="../common/js/utils.js"></script>
         <script type="text/javascript" src="../common/js/Program.js"></script>
+        <script type="text/javascript" src="../../../js/jsextend.js"></script>
         
         <link rel="stylesheet" href="../common/lib/dat.gui.css">
         <script type="text/javascript" src="../common/lib/dat.gui.js"></script>
@@ -47,17 +48,6 @@
             let squareColor = [1, 0, 1];
             let clearColor = [0, 0, 0];
             let colorBuffer;
-            
-            Array.prototype.repeat = function (n) {
-                var retVal = [];
-                for (var i = 1; i <= n; i++) {
-                    for (var j = 0; j < this.length; j++) {
-                        retVal.push(this[j]);
-                    }
-                }
-
-                return retVal;
-            };
             
             function initProgram() {
                 program = new Program(gl, "vertex-shader", "fragment-shader");
