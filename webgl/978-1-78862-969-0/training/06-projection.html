@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>AJAX Loading</title>
+        <title>Projection</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -8,14 +8,18 @@
         
         <link rel="stylesheet" href="../common/lib/normalize.css">
         <script type="text/javascript" src="../common/js/utils.js"></script>
+        <script type="text/javascript" src="../common/lib/gl-matrix.js"></script>
 
         <script id="vertex-shader" type="x-shader/x-vertex">
             #version 300 es
+            
+            uniform mat4 uModelViewMatrix;
+            uniform mat4 uProjectionMatrix;
 
             in vec3 aVertexPosition;
 
             void main(void) {
-                gl_Position = vec4(aVertexPosition, 1.0);
+                gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
             }
         </script>
 
@@ -35,6 +39,9 @@
         <script type="text/javascript">
             let gl, program, indices;
             let coneVAO, model;
+            
+            let projectionMatrix = mat4.create();
+            let modelViewMatrix = mat4.create();
 
             function initProgram() {
                 const vertexShader = utils.getShader(gl, "vertex-shader");
@@ -55,14 +62,24 @@
 
                 program.aVertexPosition = gl.getAttribLocation(program, 'aVertexPosition');
                 program.uModelColor = gl.getUniformLocation(program, 'uModelColor');
+                
+                program.uProjectionMatrix = gl.getUniformLocation(program, "uProjectionMatrix");
+                program.uModelViewMatrix = gl.getUniformLocation(program, "uModelViewMatrix");
             }
             
             function draw() {
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                 gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+                
+                mat4.perspective(projectionMatrix, 45, gl.canvas.width / gl.canvas.height, 0.1, 10000);
+                mat4.identity(modelViewMatrix);
+                mat4.translate(modelViewMatrix, modelViewMatrix, [0, 0, -5]);
+                
+                gl.uniformMatrix4fv(program.uProjectionMatrix, false, projectionMatrix);
+                gl.uniformMatrix4fv(program.uModelViewMatrix, false, modelViewMatrix);
 
                 gl.bindVertexArray(coneVAO);
-                gl.drawElements(gl.TRIANGLES, model.indices.length, gl.UNSIGNED_SHORT, 0);
+                gl.drawElements(gl.LINE_STRIP, model.indices.length, gl.UNSIGNED_SHORT, 0);
 
                 gl.bindVertexArray(null);
             }
@@ -99,7 +116,7 @@
 
             function init() {
                 const canvas = utils.getCanvas('webgl-canvas');
-                utils.autoEqualSizeCanvas(canvas);
+                utils.autoResizeCanvas(canvas);
 
                 gl = utils.getGLContext(canvas);
 
