@@ -79,7 +79,7 @@
                 gl.uniformMatrix4fv(program.uModelViewMatrix, false, modelViewMatrix);
 
                 gl.bindVertexArray(coneVAO);
-                gl.drawElements(gl.LINE_STRIP, model.indices.length, gl.UNSIGNED_SHORT, 0);
+                gl.drawElements(gl.LINE_LOOP, model.indices.length, gl.UNSIGNED_SHORT, 0);
 
                 gl.bindVertexArray(null);
             }
