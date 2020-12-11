@@ -23,8 +23,8 @@
             out vec3 vNormal;
 
             void main(void) {
-                gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
                 vNormal = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
+                gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
             }
         </script>
 
@@ -34,16 +34,26 @@
             
             // lights
             uniform vec4 uLightAmbient;
-            //uniform vec4 uLightColor;
+            uniform vec3 uLightDirection;
+            uniform vec4 uLightColor;
             
             // material
             uniform vec4 uModelColor;
 
+            in vec3 vNormal;
             out vec4 flagColor;
 
             void main(void) {
                 vec4 ambient = uLightAmbient * uModelColor;
-                flagColor = ambient;
+                
+                vec3 L = normalize(uLightDirection);
+                vec3 N = normalize(vNormal);
+                
+                float lamberTerm = dot(N, -L);
+                
+                vec4 diffuse = uLightColor * uModelColor * lamberTerm;
+                
+                flagColor = ambient + diffuse;
             }
         </script>
 
@@ -51,7 +61,9 @@
             let gl, program, indices;
             let coneVAO, model;
             
-            let lightAmbient = [0.03, 0.5, 0.03, 1.0];
+            let lightAmbient = [0.03, 0.03, 0.03, 1.0];
+            let lightColor = [1, 0.3, 0];
+            let lightDirection = [-0.55, -0.25, -0.25];
             
             let projectionMatrix = mat4.create();
             let modelViewMatrix = mat4.create();
@@ -77,10 +89,11 @@
                 program.aVertexPosition = gl.getAttribLocation(program, 'aVertexPosition');
                 program.aVertexNormal = gl.getAttribLocation(program, 'aVertexNormal');
                 
-                program.uModelColor = gl.getUniformLocation(program, 'uModelColor');
-                
                 program.uLightAmbient = gl.getUniformLocation(program, 'uLightAmbient');
-                //program.uLightColor = gl.getUniformLocation(program, 'uLightColor');
+                program.uLightDirection = gl.getUniformLocation(program, 'uLightDirection');
+                program.uLightColor = gl.getUniformLocation(program, 'uLightColor');
+                
+                program.uModelColor = gl.getUniformLocation(program, 'uModelColor');
                 
                 program.uProjectionMatrix = gl.getUniformLocation(program, "uProjectionMatrix");
                 program.uModelViewMatrix = gl.getUniformLocation(program, "uModelViewMatrix");
@@ -90,14 +103,8 @@
             function initLights() {
                 gl.uniform4fv(program.uLightAmbient, lightAmbient);
                 
-                
-                
-                
-                
-                
-                
-                
-                //gl.uniform4fv(program.uLightColor, [1.0, 1.0, 1.0, .10]);
+                gl.uniform3fv(program.uLightColor, lightColor);
+                gl.uniform3fv(program.uLightDirection, lightDirection);
             }
             
             function draw() {
