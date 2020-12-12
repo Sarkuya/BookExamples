@@ -91,7 +91,8 @@
       parts = [],
       angle = 0,
       lastTime = 0,
-      distance = -120,
+      //distance = -120,
+      distance = -5,
       shininess = 24,
       lightPosition = [100, 400, 100];
 
@@ -191,8 +192,10 @@
     }
 
     function load() {
-      for (let i = 1; i < 179; i++) {
-        fetch(`../common/models/nissan-gtr/part${i}.json`)
+      //for (let i = 1; i < 179; i++) {
+      for (let i = 1; i < 26; i++) {
+        //fetch(`../common/models/nissan-gtr/part${i}.json`)
+        fetch(`../common/models/bmw-i8/part${i}.json`)
         .then(res => res.json())
         .then(part => {
           // Configure VAO
