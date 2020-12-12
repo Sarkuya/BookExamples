@@ -48,7 +48,9 @@
             let gl, program, indices;
             let coneVAO, model;
             
-            let lightAmbient = [0.03, 0.03, 0.03, 1.0];
+            let lightAmbient = [0.2, 0.2, 0.2, 1.0];
+            
+            let modelColor = [1.0, 1.0, 1.0, 1.0];
             
             let projectionMatrix = mat4.create();
             let modelViewMatrix = mat4.create();
@@ -95,7 +97,7 @@
                             coneVAO = gl.createVertexArray();
                             gl.bindVertexArray(coneVAO);
                             
-                            gl.uniform4f(program.uModelColor, 1.0, 1.0, 1.0, 1.0);
+                            gl.uniform4fv(program.uModelColor, modelColor);
 
                             const vbo = gl.createBuffer();
                             gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
